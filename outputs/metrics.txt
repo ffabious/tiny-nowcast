@@ -1,0 +1,7 @@
+baseline
+  val: mse=0.001664, mae=0.026043
+  test: mse=0.001807, mae=0.026930
+
+tiny_nowcast
+  val: mse=0.001045, mae=0.021251
+  test: mse=0.001108, mae=0.021715
