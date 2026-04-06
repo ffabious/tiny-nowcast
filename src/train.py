@@ -65,7 +65,7 @@ def train_model(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train the TinyNowcastModel on synthetic precipitation data.")
     parser.add_argument("--data-path", type=str, default="data/synth_data.npz", help="Path to the dataset file.")
-    parser.add_argument("--model-path", type=str, default="tiny_nowcast_model.pth", help="Path to save the trained model.")
+    parser.add_argument("--model-path", type=str, default="models/tiny_nowcast_model.pth", help="Path to save the trained model.")
     parser.add_argument("--batch-size", type=int, default=64, help="Batch size for training.")
     parser.add_argument("--num-epochs", type=int, default=15, help="Number of training epochs.")
     parser.add_argument("--learning-rate", type=float, default=1e-3, help="Learning rate for the optimizer.")
