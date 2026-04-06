@@ -6,6 +6,8 @@ from pathlib import Path
 import numpy as np
 from tqdm import tqdm
 
+from reproducibility import DEFAULT_SEED, set_seed
+
 
 IMAGE_SIZE = 64
 NUM_FRAMES = 5
@@ -73,13 +75,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--train-size", type=int, default=DEFAULT_TRAIN_SIZE)
     parser.add_argument("--val-size", type=int, default=DEFAULT_EVAL_SIZE)
     parser.add_argument("--test-size", type=int, default=DEFAULT_EVAL_SIZE)
-    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--seed", type=int, default=DEFAULT_SEED)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
+    set_seed(args.seed)
     rng = np.random.default_rng(args.seed)
 
     x_train, y_train = generate_split(args.train_size, rng, "train")
@@ -98,6 +101,7 @@ def main() -> None:
     )
 
     print(f"Saved dataset to {args.output}")
+    print(f"Seed: {args.seed}")
     print(f"x_train: {x_train.shape}, y_train: {y_train.shape}")
     print(f"x_val: {x_val.shape}, y_val: {y_val.shape}")
     print(f"x_test: {x_test.shape}, y_test: {y_test.shape}")

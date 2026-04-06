@@ -6,6 +6,7 @@ from torch import nn, optim
 
 from dataset import create_dataloaders
 from model import TinyNowcastModel
+from reproducibility import DEFAULT_SEED, set_seed
 
 def train_model(
     data_path: str,
@@ -14,8 +15,10 @@ def train_model(
     learning_rate: float,
     model_path: str,
     device: torch.device,
+    seed: int,
 ) -> None:
-    train_loader, val_loader, _ = create_dataloaders(data_path, batch_size)
+    set_seed(seed)
+    train_loader, val_loader, _ = create_dataloaders(data_path, batch_size, seed=seed)
 
     model = TinyNowcastModel().to(device)
     criterion = nn.MSELoss()
@@ -55,6 +58,7 @@ def train_model(
 
     # Save the trained model
     model_path = Path(model_path)
+    model_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save(model.state_dict(), model_path)
     print(f"Model saved to {model_path}")
 
@@ -63,8 +67,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--data-path", type=str, default="data/synth_data.npz", help="Path to the dataset file.")
     parser.add_argument("--model-path", type=str, default="tiny_nowcast_model.pth", help="Path to save the trained model.")
     parser.add_argument("--batch-size", type=int, default=64, help="Batch size for training.")
-    parser.add_argument("--num-epochs", type=int, default=10, help="Number of training epochs.")
+    parser.add_argument("--num-epochs", type=int, default=15, help="Number of training epochs.")
     parser.add_argument("--learning-rate", type=float, default=1e-3, help="Learning rate for the optimizer.")
+    parser.add_argument("--seed", type=int, default=DEFAULT_SEED, help="Random seed for reproducible training.")
     parser.add_argument("--device", type=str, default="cuda" if torch.cuda.is_available() else "cpu", help="Device to use for training.")
     return parser.parse_args()
 
@@ -72,6 +77,7 @@ def main() -> None:
     args = parse_args()
     device = torch.device(args.device)
     print(f"Using device: {device}")
+    print(f"Seed: {args.seed}")
 
     train_model(
         data_path=args.data_path,
@@ -80,6 +86,7 @@ def main() -> None:
         learning_rate=args.learning_rate,
         model_path=args.model_path,
         device=device,
+        seed=args.seed,
     )
 
 if __name__ == "__main__":
